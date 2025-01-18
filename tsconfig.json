@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2022", // Supports modern syntax and top-level `await`
+    "module": "esnext", // Enables top-level `await` for ES modules
+    "moduleResolution": "node", // Standard Node.js module resolution
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,28 @@
+service: ecommerce-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    DB_HOST: ${ssm:/ecommerce/DB_HOST}
+    DB_USER: ${ssm:/ecommerce/DB_USER}
+    DB_PASSWORD: ${ssm:/ecommerce/DB_PASSWORD}
+    DB_NAME: ${ssm:/ecommerce/DB_NAME}
+    REDIS_URL: ${ssm:/ecommerce/REDIS_URL}
+    COGNITO_USER_POOL_ID: ${ssm:/ecommerce/COGNITO_USER_POOL_ID}
+    COGNITO_CLIENT_ID: ${ssm:/ecommerce/COGNITO_CLIENT_ID}
+
+functions:
+  registerUser:
+    handler: src/controllers/UserController.registerUser
+    events:
+      - http:
+          path: users/register
+          method: post
+  uploadFile:
+    handler: src/controllers/FileController.uploadFile
+    events:
+      - http:
+          path: files/upload
+          method: post
+          cors: true
