@@ -27,7 +27,6 @@ export class UserService {
 
   async register(username: string, password: string, email: string) {
     let cognitoUserCreated = false;
-    let databaseUserCreated = false;
 
     try {
       logger.info(`[UserService] Registering user: ${username}`);
@@ -50,11 +49,7 @@ export class UserService {
         password: encryptedPassword,
         email,
       });
-      databaseUserCreated = true; // Track that the database user was created
       logger.info(`[UserService] User created in database: ${username}`);
-
-      await cache.set(`user:${username}`, JSON.stringify(user), 3600);
-      logger.info(`[UserService] User cached successfully: ${username}`);
 
       return {
         message: "User registered successfully. Please confirm your email.",
@@ -63,35 +58,7 @@ export class UserService {
       logger.error(`[UserService] Registration failed for user: ${username}`, {
         error,
       });
-
-      // Rollback logic
-      try {
-        if (cognitoUserCreated) {
-          logger.info(`[UserService] Rolling back Cognito user: ${username}`);
-          await cache.delete(username);
-          logger.info(`[UserService] Cognito user rolled back: ${username}`);
-        }
-
-        if (databaseUserCreated) {
-          logger.info(`[UserService] Rolling back database user: ${username}`);
-          const user = await this.userRepository.findUserByUsername(username);
-          if (user) {
-            await this.userRepository.deleteUser(user.id);
-            logger.info(`[UserService] Database user rolled back: ${username}`);
-          }
-        }
-
-        // Remove cache if any was set
-        logger.info(`[UserService] Removing cache for user: ${username}`);
-        await cache.delete(`user:${username}`);
-        logger.info(`[UserService] Cache removed for user: ${username}`);
-      } catch (rollbackError) {
-        logger.error(
-          `[UserService] Rollback failed for user: ${username}`,
-          rollbackError
-        );
-      }
-
+      
       throw new Error("Registration failed");
     }
   }

@@ -5,6 +5,7 @@ import {
   initiatePasswordReset as cognitoInitiatePasswordReset,
   completePasswordReset as cognitoCompletePasswordReset,
 } from "../utils/cognito";
+import { cache } from "../utils/cache";
 import logger from "../utils/logger";
 
 export class AuthenticationService {
@@ -13,13 +14,27 @@ export class AuthenticationService {
     password: string,
     email: string
   ): Promise<void> {
-    await cognitoRegisterUser(username, password, email);
-    logger.info(
-      `[AuthenticationService] User registered in Cognito: ${username}`
-    );
-    logger.info(
-      `[AuthenticationService] User registered in Cognito: ${username}`
-    );
+    let cognitoUserCreated: boolean = false;
+
+    try {
+      logger.info(
+        `[AuthenticationService] Registering user in Cognito: ${username}`
+      );
+      await cognitoRegisterUser(username, password, email);
+      cognitoUserCreated = true;
+      logger.info(
+        `[AuthenticationService] User registered in Cognito: ${username}`
+      );
+    } catch (error) {
+      if (cognitoUserCreated) {
+        logger.info(`[UserService] Rolling back Cognito user: ${username}`);
+        await cache.delete(username);
+        logger.info(`[UserService] Cognito user rolled back: ${username}`);
+      }
+      logger.info(`[UserService] Removing cache for user: ${username}`);
+      await cache.delete(`user:${username}`);
+      logger.info(`[UserService] Cache removed for user: ${username}`);
+    }
   }
 
   async authenticateUser(username: string, password: string): Promise<string> {
