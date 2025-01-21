@@ -1,11 +1,9 @@
 import { UserService } from "../services/UserService";
-import { UserRepository } from "../repositories/UserRepository";
-import { AppDataSource } from "../config/database";
 import { HttpResponse } from "../utils/HttpResponse";
 import logger from "../utils/logger";
+import { User } from "../entities/User";
 
-const userRepository = new UserRepository(AppDataSource);
-const userService = new UserService(userRepository);
+const userService = new UserService();
 
 export const registerUser = async (event: any) => {
   try {
@@ -24,7 +22,11 @@ export const registerUser = async (event: any) => {
       };
     }
 
-    const response = await userService.register(username, password, email);
+    const response = await userService.save({
+      username,
+      password,
+      email,
+    } as User);
     return {
       statusCode: 200,
       body: JSON.stringify(
@@ -224,7 +226,7 @@ export const getUserById = async (event: any) => {
       };
     }
 
-    const user = await userService.getUserById(Number(id));
+    const user = await userService.findById(Number(id));
     if (!user) {
       logger.warn(`[UserController] User not found with ID: ${id}`);
       return {
@@ -270,7 +272,7 @@ export const updateUser = async (event: any) => {
       };
     }
 
-    const updatedUser = await userService.updateUser(Number(id), updatedData);
+    const updatedUser = await userService.update(Number(id), updatedData);
     if (!updatedUser) {
       logger.warn(`[UserController] Failed to update user with ID: ${id}`);
       return {
