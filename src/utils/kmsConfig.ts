@@ -18,13 +18,15 @@ export const encryptPassword = async (
     throw new Error("Failed to encrypt password");
   }
 
-  return response.CiphertextBlob.toString("base64");
+  return Buffer.from(response.CiphertextBlob!).toString("base64");
 };
 
 export const decryptPassword = async (
-  encryptedPassword: string
+  encryptedPassword: string,
+  kmsKeyId: string
 ): Promise<string> => {
   const command = new DecryptCommand({
+    KeyId: kmsKeyId,
     CiphertextBlob: Buffer.from(encryptedPassword, "base64"),
   });
 
@@ -33,5 +35,5 @@ export const decryptPassword = async (
     throw new Error("Failed to decrypt password");
   }
 
-  return response.Plaintext.toString("utf-8");
+  return new TextDecoder("utf-8").decode(response.Plaintext);
 };

@@ -2,10 +2,8 @@ import {
   authenticate as cognitoAuthenticate,
   registerUser as cognitoRegisterUser,
   confirmUserRegistration as cognitoConfirmUserRegistration,
-  initiatePasswordReset as cognitoInitiatePasswordReset,
-  completePasswordReset as cognitoCompletePasswordReset,
-} from "../utils/cognito";
-import { cache } from "../utils/cache";
+} from "../utils/cognitoConfig";
+import { cache } from "../utils/cacheConfig";
 import logger from "../utils/logger";
 
 export class AuthenticationService {
