@@ -1,10 +1,6 @@
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import logger from "../utils/logger"; // Import your logger
 
-const ssmClient = new SSMClient({
-  region: process.env.AWS_REGION || "us-east-1",
-});
-
 // In-memory cache for storing SSM parameters
 const cachedParameters: Record<string, string> = {};
 
@@ -18,6 +14,10 @@ export const getCachedParameter = async (
   name: string,
   withDecryption = true
 ): Promise<string> => {
+  const ssmClient = new SSMClient({
+    region: process.env.AWS_REGION || "us-east-1",
+  });
+  
   try {
     // Check if the parameter exists in the cache
     if (cachedParameters[name]) {

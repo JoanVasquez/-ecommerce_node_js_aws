@@ -1,3 +1,28 @@
-/node_modules/
+# Node modules
+node_modules/
+
+# Build or output directories (if you build/transpile code)
+dist/
+build/
+
+# Test coverage and reports
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# Local testing database files
+testdb/
+
+# OS-specific or editor-specific (optional)
+.DS_Store
+Thumbs.db
+
+# Environment files (if present, keep secrets out of Git)
 .env
-.package-lock.json
+.env.* 
+
+# Ignore serverless offline directories (if used)
+.serverless/

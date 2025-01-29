@@ -77,6 +77,7 @@ export abstract class GenericRepository<T extends ObjectLiteral>
       await this.repo.update(id, updatedData);
 
       const updatedEntity = await this.findEntityById(id);
+
       if (!updatedEntity) {
         logger.error(`[GenericRepository] Entity with ID: ${id} not found`);
         throw new Error(`Entity with ID ${id} not found`);
@@ -89,6 +90,8 @@ export abstract class GenericRepository<T extends ObjectLiteral>
           cacheModel.expiration
         );
       }
+
+      console.log(updatedData);
 
       return updatedEntity;
     } catch (error) {

@@ -1,10 +1,12 @@
-import { AppDataSource } from "./config/database";
+import { initDataSource } from "./config/database";
 
-(async () => {
-  try {
-    await AppDataSource.initialize();
-    console.log("Database connection established successfully");
-  } catch (error) {
-    console.error("Error during database initialization:", error);
-  }
-})();
+async function bootstrap() {
+  await initDataSource();
+  // Now AppDataSource is ready
+  // Start your server, run migrations, etc.
+}
+
+bootstrap().catch((err) => {
+  console.error("Failed to initialize DataSource:", err);
+  process.exit(1);
+});
