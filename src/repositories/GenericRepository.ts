@@ -18,15 +18,11 @@ export abstract class GenericRepository<T extends ObjectLiteral>
       const savedEntity = await this.repo.save(entity);
 
       if (cacheModel) {
-        const cacheEntity = await cache.get(cacheModel.key);
-
-        if (!cacheEntity) {
-          await cache.set(
-            cacheModel.key,
-            JSON.stringify(entity),
-            cacheModel.expiration
-          );
-        }
+        await cache.set(
+          cacheModel.key,
+          JSON.stringify(entity),
+          cacheModel.expiration
+        );
       }
       return savedEntity;
     } catch (error) {

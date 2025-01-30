@@ -102,22 +102,12 @@ describe("GenericRepository", () => {
       const result = await genericRepository.createEntity(user, mockCacheModel);
 
       expect(mockRepository.save).toHaveBeenCalledWith(user);
-      expect(cache.get).toHaveBeenCalledWith(mockCacheModel.key);
       expect(cache.set).toHaveBeenCalledWith(
         mockCacheModel.key,
         JSON.stringify(user),
         mockCacheModel.expiration
       );
       expect(result).toEqual(user);
-    });
-
-    it("should not set cache if cache already has value", async () => {
-      (mockRepository.save as jest.Mock).mockResolvedValue(user);
-      (cache.get as jest.Mock).mockResolvedValue(JSON.stringify(user));
-
-      await genericRepository.createEntity(user, mockCacheModel);
-
-      expect(cache.set).not.toHaveBeenCalled();
     });
 
     it("should return null if there is an error saving", async () => {
